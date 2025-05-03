@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spend Mansa Musa's Money</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: #222;
+    }
+    header {
+      background: linear-gradient(to right, #00b4db, #0083b0);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .money-display {
+      text-align: center;
+      font-size: 1.5rem;
+      margin: 20px 0;
+      transition: all 0.3s ease-in-out;
+    }
+    .controls {
+      text-align: center;
+      margin: 10px;
+    }
+    .controls button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      background-color: #00b4db;
+      color: white;
+      transition: transform 0.2s ease, background-color 0.3s;
+      box-shadow: 0 2px 6px rgba(0, 180, 219, 0.3);
+    }
+    .controls button:hover {
+      transform: scale(1.05);
+      background-color: #0083b0;
+    }
+    .shop {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .item {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    .item h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+    .item p {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+    }
+    .item button {
+      background-color: #00b4db;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .item button:hover {
+      background-color: #0083b0;
+    }
+    .animate-spend {
+      animation: spendFlash 0.5s ease;
+    }
+    @keyframes spendFlash {
+      0% { background-color: #ffebee; }
+      100% { background-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <header>Spend Mansa Musa's Money</header>
+  <div class="money-display" id="money-container">You have: $<span id="money">400000000000</span></div>
+  <div class="controls">
+    <button onclick="saveGame()">Save Game</button>
+    <button onclick="sellAll()">Sell All</button>
+  </div>
+  <div class="shop" id="shop"></div>
+  <script>
+    let money = parseFloat(localStorage.getItem('money')) || 400000000000;
+    const moneyDisplay = document.getElementById("money");
+    const moneyContainer = document.getElementById("money-container");
+
+    const items = [
+      { name: "Chocolate Bar", price: 2 },
+      { name: "Coffee", price: 5 },
+      { name: "T-shirt", price: 20 },
+      { name: "Headphones", price: 100 },
+      { name: "Smartphone", price: 800 },
+      { name: "Gaming PC", price: 2000 },
+      { name: "Luxury Watch", price: 10000 },
+      { name: "Used Car", price: 15000 },
+      { name: "Vacation Trip", price: 30000 },
+      { name: "Diamond Ring", price: 50000 },
+      { name: "Tesla Model 3", price: 45000 },
+      { name: "Rolex", price: 12000 },
+      { name: "Speedboat", price: 100000 },
+      { name: "Small House", price: 250000 },
+      { name: "Private Chef", price: 500000 },
+      { name: "Helicopter", price: 1000000 },
+      { name: "Ferrari", price: 2000000 },
+      { name: "Private Jet", price: 10000000 },
+      { name: "Yacht", price: 20000000 },
+      { name: "Movie Studio", price: 50000000 },
+      { name: "Hospital", price: 100000000 },
+      { name: "Skyscraper", price: 300000000 },
+      { name: "NBA Team", price: 2500000000 },
+      { name: "Island", price: 75000000 },
+      { name: "Mars Mission", price: 20000000000 },
+      { name: "Space Station", price: 60000000000 },
+      { name: "Buy Twitter", price: 44000000000 },
+      { name: "Own the Moon", price: 80000000000 },
+      { name: "Time Machine", price: 99000000000 },
+    ];
+
+    const shop = document.getElementById("shop");
+    const inventory = {};
+
+    function updateDisplay() {
+      moneyDisplay.textContent = money.toLocaleString();
+    }
+
+    function animateSpend() {
+      moneyContainer.classList.add('animate-spend');
+      setTimeout(() => moneyContainer.classList.remove('animate-spend'), 500);
+    }
+
+    function buyItem(index) {
+      const item = items[index];
+      if (money >= item.price) {
+        money -= item.price;
+        inventory[item.name] = (inventory[item.name] || 0) + 1;
+        updateDisplay();
+        animateSpend();
+        updateItemQuantity(index);
+      }
+    }
+
+    function updateItemQuantity(index) {
+      const item = items[index];
+      const itemDiv = shop.children[index];
+      const quantityDisplay = itemDiv.querySelector('.quantity');
+      
+      if (quantityDisplay) {
+        quantityDisplay.textContent = `Quantity: ${inventory[item.name]}`;
+      } else {
+        const quantityElement = document.createElement('p');
+        quantityElement.className = 'quantity';
+        quantityElement.textContent = `Quantity: ${inventory[item.name]}`;
+        itemDiv.appendChild(quantityElement);
+      }
+    }
+
+    function sellAll() {
+      for (let itemName in inventory) {
+        const item = items.find(i => i.name === itemName);
+        money += item.price * inventory[itemName];
+      }
+      Object.keys(inventory).forEach(k => inventory[k] = 0);
+      updateDisplay();
+    }
+
+    function saveGame() {
+      localStorage.setItem('money', money);
+      alert("Game saved!");
+    }
+
+    items.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `<h3>${item.name}</h3>
+        <p>Price: $${item.price.toLocaleString()}</p>
+        <button onclick="buyItem(${index})">Buy</button>`;
+      shop.appendChild(div);
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>
